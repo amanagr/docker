@@ -35,6 +35,26 @@ usermod -aG docker deploy
 	docker login
 	```
 
+### What is a Docker Image?
+
+	A Docker image is made up of filesystems layered over each other. At the
+	base is a boot filesystem, 'bootfs', which resembles the typical Linux/Unix boot
+	filesystem. A Docker user will probably never interact with the boot filesystem.
+	Indeed, when a container has booted, it is moved into memory, and the boot
+	filesystem is unmounted to free up the RAM used by the initrd disk image.
+	So far this looks pretty much like a typical Linux virtualization stack. Indeed,
+	Docker next layers a root filesystem, 'rootfs' , on top of the boot filesystem. This
+	rootfs can be one or more operating systems.
+
+	In the Docker world, however, the root filesystem stays in read-only mode, and Docker
+	takes advantage of a union mount to add more read-only filesystems onto the
+	root filesystem. A union mount is a mount that allows several filesystems to be
+	mounted at one time but appear to be one filesystem. The union mount overlays
+	the filesystems on top of one another so that the resulting filesystem may contain
+	files and subdirectories from any or all of the underlying filesystems. Docker calls
+	each of these filesystems images.
+
+
 ## Docker CheatSheet:
 
 - **Run an Interactive ubuntu shell**:
@@ -75,3 +95,30 @@ usermod -aG docker deploy
 	`docker rm ubuntu_container`
 
 	`docker rm 'docker ps -a -q'`_Delete all containers_
+
+- **List docker images available on host**
+
+	`docker images <OPTIONAL:PULLED REPO>`
+
+- **Download images by tag names**
+
+	`sudo docker run --name ubuntu_container -i -t ubuntu:xenial /bin/bash`_"-t <\REPOSITORY>:<\TAG>"_
+
+- **PULL an image**
+
+	`sudo docker pull fedora`
+
+- **Searching for pulicly available docker images**
+
+	`sudo docker search puppet`
+
+##### Creating Docker Images
+
+- **Using 'docker commit' to create images [_Not Recommended_]**
+
+	```
+	$ docker run --name uc -i -t ubuntu /bin/bash
+	# Install whatever you want
+	# exit
+	$ docker commit -m="A new custom image" --author="Aman Agrawal" uc <DOCKERUSERNAME/NAMEOFTHEIMAGE>
+	```
