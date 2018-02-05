@@ -16,11 +16,11 @@
 4. Login through your terminal using :
 	`ssh root@<ip-of-droplet>`
 5. Run:
-```
-#create an "deploy" user with Docker privileges
-useradd --user-group --create-home --shell /bin/bash deploy
-usermod -aG docker deploy
-```
+	```
+	#create an "deploy" user with Docker privileges
+	useradd --user-group --create-home --shell /bin/bash deploy
+	usermod -aG docker deploy
+	```
 6. [Copy root authorized_keys to "deploy" user](https://www.digitalocean.com/community/questions/error-permission-denied-publickey-when-i-try-to-ssh) :
 
 	```
