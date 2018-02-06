@@ -94,7 +94,7 @@
 
 	`docker rm ubuntu_container`
 
-	`docker rm 'docker ps -a -q'`_Delete all containers_
+	`docker rm 'docker ps -a -q'` _Delete all containers_
 
 - **List docker images available on host**
 
@@ -102,7 +102,7 @@
 
 - **Download images by tag names**
 
-	`sudo docker run --name ubuntu_container -i -t ubuntu:xenial /bin/bash`_"-t <\REPOSITORY>:<\TAG>"_
+	`sudo docker run --name ubuntu_container -i -t ubuntu:xenial /bin/bash` _REPO:TAG_
 
 - **PULL an image**
 
@@ -122,3 +122,76 @@
 	# exit
 	$ docker commit -m="A new custom image" --author="Aman Agrawal" uc <DOCKERUSERNAME/NAMEOFTHEIMAGE>
 	```
+
+**Building images with a Dockerfile[_Recommended_]**
+
+###### Why?
+
+- Docker runs a container from the image.
+- An instruction executes and makes a change to the container.
+- Docker runs the equivalent of docker commit to commit a new layer.
+- Docker then runs a new container from this new image.
+- The next instruction in the file is executed, and the process repeats until all instructions have been executed.
+- This is highly useful when debugging
+
+
+Create Dockerfile with the necessary settings.
+
+```
+# Version 0.0.1
+FROM ubuntu:trusty
+MAINTAINER Aman Agrawal "f2016561@pilani.bits-pilani.ac.in"
+ENV REFRESHED_AT 2018-02-03
+RUN yum -y -q upgrade
+RUN apt-get update
+RUN apt-get install -y nginx
+RUN echo 'Hi, I am in your container' \
+        > /usr/share/nginx/html/index.htmnl
+EXPOSE 80
+```
+Then do:
+
+```
+docker build -t "<USERNAME/NAMEOFIMAGE>:<TAG:EG:V1>" <FOLDER OF THE Dockerfile>
+```
+Additional Commands:
+
+```
+docker history <IMAGE>
+docker build --no-cache -t "<USERNAME/NAMEOFIMAGE>:<TAG:EG:V1>" <FOLDER OF THE Dockerfile>
+sudo docker run -d -p 80 --name static_web jamtur01/static_web \ ↩  nginx -g "daemon off;"
+
+
+```
+
+
+### Dockerfile Instructions
+
+
+
+- RUN : Runs the command when the container is build.
+
+- CMD : Runs the command after the container is build.
+_Commands within array run 'as-is' otherwise docker prepends `/bin/sh -c` to it._
+_We can override the CMD instruction on the docker run command line._
+
+- ENTRYPOINT : The ENTRYPOINT instruction provides
+a command that isn't as easily overridden. Instead, any arguments we specify
+on the docker run command line will be passed as arguments to the command
+specified in the ENTRYPOINT .*Any arguments we specify
+on the docker run command line will be passed as arguments to the command
+specified in the ENTRYPOINT .*
+
+- WORKDIR : The WORKDIR instruction provides a way to set the working directory for the container and the ENTRYPOINT and/or CMD to be executed when a container is launched from the image. _Override the working directory at runtime with the -w flag._
+
+- ENV : The ENV instruction is used to set environment variables during the image build process.
+
+- USER : The USER instruction specifies a user that the image should be run as._The default user if you don't specify the USER instruction is root._
+
+- VOLUME : The VOLUME instruction adds volumes to any container created from the image.
+
+- ADD : The ADD instruction adds files and directories from our build environment into our image
+
+- COPY : The COPY instruction is closely related to the ADD instruction. The key difference is that the COPY instruction is purely focused on copying local files from the build context and does not have any extraction or decompression capabilities.
+
+- ONBUILD : The ONBUILD instruction adds triggers to images. A trigger is executed when the image is used as the basis of another image.
